@@ -7,7 +7,7 @@ const route = useRoute()
 const user = useUserStore()
 const name = route.params.id
 
-const itemsArray = ref([])
+const items = ref([])
 
 const GET_ITEMS = gql`
   query getItems {
@@ -28,14 +28,20 @@ const GET_ITEMS = gql`
   }
 `
 
-const COL_AMOUNT = 5
 
 const { result } = useQuery(GET_ITEMS)
 
-itemsArray.value = _.chunk(result.value?.items, Math.ceil(result.value?.items.length / COL_AMOUNT)) || []
+items.value = result.value?.items || []
+items.value.sort((a, b) => (b?.avg24hPrice - a?.avg24hPrice))
 
 watch(result, result => {
-  itemsArray.value = _.chunk(result.items, Math.ceil(result.items.length / COL_AMOUNT))
+  if (!result) {
+    return
+  }
+  items.value = [...result.items]
+  const y = items.value.sort((a, b) => (b?.avg24hPrice - a?.avg24hPrice))
+  console.log(y)
+  console.log(items.value)
 })
 
 definePageMeta({
@@ -44,16 +50,55 @@ definePageMeta({
 </script>
 
 <template>
-  <template v-if="itemsArray.length">
-    <div flex>
-      <ul flex-col v-for="items in itemsArray" w-sm>
-        <li v-for="item in items" :key="item.id" flex-row m-3 w-xsm h-xsm border-solid b-1 border-dark-2>
-          <a :href="item.wikiLink" target="_blank">
-            <div><img h-12 w-12 inline :src="item.iconLinkFallback" /></div>
-            <div h-12>{{ item.name }}</div>
-          </a>
-        </li>
-      </ul>
+  <template v-if="items.length">
+    <div class="grid">
+      <!-- w-sm p-4 m-3 w-xsm h-xsm border-solid b-1 border-dark-2 -->
+      <div v-for="item in items" wLg p-3>
+        <a :href="item.wikiLink" target="_blank">
+          <div><img h-12 w-12 inline :src="item.iconLinkFallback" /></div>
+          <div h-12>{{ item.name }}</div>
+          <div h-12 font-bold>prix moyen 24h<br><span bg="green" rounded text="black" p-1>{{ item.avg24hPrice
+          }}₽</span>
+          </div>
+          <div h-12 font-bold>prix précédent il y a 48h<br><span bg="green" rounded text="black" p-1>{{ item.avg24hPrice
+              + item.changeLast48h
+          }}₽</span>
+          </div>
+          <div h-12 font-bold>changement de <br><span bg="green" rounded text="black" p-1>{{ item.changeLast48hPercent
+          }}%</span>
+          </div>
+        </a>
+      </div>
     </div>
   </template>
 </template>
+
+<style>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 20px;
+  align-items: stretch;
+}
+
+.grid>div {
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+.grid>div img {
+  max-width: 100%;
+}
+
+.text {
+  padding: 0 20px 20px;
+}
+
+.text>button {
+  background: gray;
+  border: 0;
+  color: white;
+  padding: 10px;
+  width: 100%;
+}
+</style>
