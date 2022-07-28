@@ -1,4 +1,12 @@
 {
+  "[vue]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[ts]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Vue.volar"
+  },
   "prettier.enable": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
