@@ -1,6 +1,7 @@
 {
   "private": true,
   "packageManager": "pnpm@7.5.0",
+  "type":"module",
   "scripts": {
     "build": "nuxi build",
     "dev": "nuxi dev",
@@ -26,6 +27,9 @@
     "@nuxtjs/composition-api": "^0.33.0",
     "@vue/apollo-composable": "^4.0.0-alpha.12",
     "apollo3-cache-persist": "^0.14.1",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
     "graphql": "^16.5.0",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21"

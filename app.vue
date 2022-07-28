@@ -24,13 +24,6 @@ const httpLink = createHttpLink({
 // Cache implementation
 const cache = new InMemoryCache()
 
-if (process.browser) {
-  await persistCache({
-    cache,
-    storage: new LocalStorageWrapper(window.localStorage),
-  });
-}
-
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
